@@ -16,7 +16,7 @@ Create a `.env.local` file based on `.env.local.example`:
 ```bash
 # Auth0 Configuration
 AUTH0_SECRET='[use openssl rand -hex 32 to generate]'
-AUTH0_BASE_URL='http://localhost:3000' # Change for production
+AUTH0_BASE_URL='http://localhost:5000' # Change for production
 AUTH0_ISSUER_BASE_URL='https://YOUR_DOMAIN.auth0.com'
 AUTH0_CLIENT_ID='your-client-id'
 AUTH0_CLIENT_SECRET='your-client-secret'
@@ -28,19 +28,19 @@ In your Auth0 Dashboard, configure:
 
 **Allowed Callback URLs:**
 ```
-http://localhost:3000/api/auth/callback
+http://localhost:5000/api/auth/callback
 https://yourdomain.com/api/auth/callback
 ```
 
 **Allowed Logout URLs:**
 ```
-http://localhost:3000/
+http://localhost:5000/
 https://yourdomain.com/
 ```
 
 **Allowed Web Origins:**
 ```
-http://localhost:3000
+http://localhost:5000
 https://yourdomain.com
 ```
 

@@ -57,7 +57,7 @@ npx prisma db push
 npm run dev
 \`\`\`
 
-6. Open [http://localhost:3000](http://localhost:3000) in your browser
+6. Open [http://localhost:5000](http://localhost:5000) in your browser
 
 ## Tech Stack
 

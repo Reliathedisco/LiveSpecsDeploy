@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "GitHub integration not configured" }, { status: 500 })
     }
 
-    const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/github/callback`
+    const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:5000"}/api/github/callback`
     const state = Buffer.from(JSON.stringify({ userId })).toString("base64")
 
     const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=repo&state=${state}`
