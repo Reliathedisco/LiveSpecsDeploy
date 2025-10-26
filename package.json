@@ -1,0 +1,16 @@
+{
+  "name": "livespecsdeploy",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "cd livespecs && npm run dev",
+    "build": "cd livespecs && npm run build",
+    "start": "cd livespecs && npm run start",
+    "lint": "cd livespecs && npm run lint",
+    "install": "cd livespecs && npm install"
+  },
+  "dependencies": {
+    "@liveblocks/node": "^3.9.1",
+    "next-auth": "^4.24.11"
+  }
+}

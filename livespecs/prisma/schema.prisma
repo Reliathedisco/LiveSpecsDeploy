@@ -1,0 +1,146 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  auth0Id   String   @unique @map("clerk_id")
+  email     String   @unique
+  name      String?
+  imageUrl  String?
+  plan      Plan     @default(FREE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ownedSpecs       Spec[]          @relation("SpecOwner")
+  collaborations   Collaborator[]
+  ownedTeams       Team[]          @relation("TeamOwner")
+  teamMemberships  TeamMember[]
+  subscription     Subscription?
+
+  @@index([auth0Id])
+  @@index([email])
+}
+
+model Spec {
+  id        String   @id @default(cuid())
+  name      String
+  content   String   @db.Text
+  ownerId   String
+  owner     User     @relation("SpecOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  teamId    String?
+  team      Team?    @relation(fields: [teamId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  collaborators Collaborator[]
+  versions      SpecVersion[]
+
+  @@index([ownerId])
+  @@index([teamId])
+  @@index([updatedAt])
+}
+
+model Collaborator {
+  id        String           @id @default(cuid())
+  specId    String
+  spec      Spec             @relation(fields: [specId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      CollaboratorRole @default(VIEWER)
+  createdAt DateTime         @default(now())
+
+  @@unique([specId, userId])
+  @@index([specId])
+  @@index([userId])
+}
+
+model Team {
+  id        String   @id @default(cuid())
+  name      String
+  ownerId   String
+  owner     User     @relation("TeamOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  plan      Plan     @default(FREE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members TeamMember[]
+  specs   Spec[]
+
+  @@index([ownerId])
+}
+
+model TeamMember {
+  id        String   @id @default(cuid())
+  teamId    String
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      TeamRole @default(MEMBER)
+  createdAt DateTime @default(now())
+
+  @@unique([teamId, userId])
+  @@index([teamId])
+  @@index([userId])
+}
+
+model Subscription {
+  id                     String             @id @default(cuid())
+  userId                 String             @unique
+  user                   User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stripeCustomerId       String             @unique
+  stripeSubscriptionId   String?            @unique
+  stripePriceId          String?
+  stripeCurrentPeriodEnd DateTime?
+  status                 SubscriptionStatus @default(INACTIVE)
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+
+  @@index([userId])
+  @@index([stripeCustomerId])
+}
+
+model SpecVersion {
+  id        String   @id @default(cuid())
+  specId    String
+  spec      Spec     @relation(fields: [specId], references: [id], onDelete: Cascade)
+  content   String   @db.Text
+  message   String?
+  createdAt DateTime @default(now())
+
+  @@index([specId])
+  @@index([createdAt])
+}
+
+enum Plan {
+  FREE
+  TEAM
+}
+
+enum CollaboratorRole {
+  VIEWER
+  EDITOR
+  ADMIN
+}
+
+enum TeamRole {
+  MEMBER
+  ADMIN
+  OWNER
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  INCOMPLETE
+  INCOMPLETE_EXPIRED
+  PAST_DUE
+  TRIALING
+  UNPAID
+  INACTIVE
+}

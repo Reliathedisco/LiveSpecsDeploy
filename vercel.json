@@ -1,0 +1,12 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "livespecs/package.json",
+            "use": "@vercel/next"
+        }
+    ],
+    "installCommand": "cd livespecs && npm install",
+    "buildCommand": "cd livespecs && npm run vercel-build",
+    "devCommand": "cd livespecs && npm run dev"
+}
