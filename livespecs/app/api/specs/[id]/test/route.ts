@@ -27,7 +27,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     }
 
     const parsedSpec = yaml.load(spec.content) as any
-    const url = baseUrl ? `${baseUrl}${path}` : `http://localhost:5000/api/mock/${id}${path}`
+    const url = baseUrl ? `${baseUrl}${path}` : `http://localhost:3001/api/mock/${id}${path}`
 
     const startTime = Date.now()
     let response: Response
