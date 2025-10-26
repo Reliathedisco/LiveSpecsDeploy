@@ -33,7 +33,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     }
 
     // Generate documentation URL (in production, this would generate actual docs)
-    const docsUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:5000"}/docs/${id}`
+    const docsUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:4000"}/docs/${id}`
 
     // Store documentation generation in database
     await sql`
