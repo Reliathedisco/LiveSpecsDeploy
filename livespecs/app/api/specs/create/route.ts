@@ -1,5 +1,5 @@
 import { sql } from "@/lib/db"
-import { getSession, withApiAuthRequired } from '@auth0/nextjs-auth0'
+import { getSession } from '@auth0/nextjs-auth0'
 import { NextResponse } from "next/server"
 
 const DEFAULT_OPENAPI_SPEC = `openapi: 3.0.0
@@ -28,13 +28,12 @@ paths:
                     example: "Hello, World!"
 `
 
-export const POST = withApiAuthRequired(async function handler(request: Request) {
+export async function POST(request: Request) {
   try {
     console.log("[v0] === CREATE SPEC REQUEST STARTED ===")
     console.log("[v0] Getting current user from Auth0")
 
-    const res = new NextResponse()
-    const session = await getSession(request, res)
+    const session = await getSession()
 
     if (!session || !session.user) {
       console.log("[v0] ERROR: No Auth0 user found")
@@ -194,4 +193,4 @@ export const POST = withApiAuthRequired(async function handler(request: Request)
       { status: 500 },
     )
   }
-})
+}

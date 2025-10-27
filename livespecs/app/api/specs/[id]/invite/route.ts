@@ -1,18 +1,18 @@
 import { sql } from "@/lib/db"
-import { currentUser } from "@clerk/nextjs/server"
+import { getSession } from "@auth0/nextjs-auth0"
 import { NextResponse } from "next/server"
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
-    const clerkUser = await currentUser()
+    const session = await getSession(); const clerkUser = session?.user
 
     if (!clerkUser) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     const userRows = (await sql<{ id: string }>`
-      SELECT id FROM users WHERE clerk_id = ${clerkUser.id}
+      SELECT id FROM users WHERE clerk_id = ${clerkUser.sub}
     `) as { id: string }[]
 
     const user = userRows[0]

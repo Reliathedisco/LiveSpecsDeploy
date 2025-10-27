@@ -1,14 +1,16 @@
 import { sql } from "@/lib/db"
-import { auth } from "@clerk/nextjs/server"
+import { getSession } from "@auth0/nextjs-auth0"
 import crypto from "crypto"
 import { type NextRequest, NextResponse } from "next/server"
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = await auth()
-    if (!userId) {
+    const res = new NextResponse()
+    const session = await getSession(request, res)
+    if (!session || !session.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
+    const userId = session.user.sub
 
     const { name, expiresIn } = await request.json()
 
@@ -55,10 +57,12 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const { userId } = await auth()
-    if (!userId) {
+    const res = new NextResponse()
+    const session = await getSession(request, res)
+    if (!session || !session.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
+    const userId = session.user.sub
 
     const users = (await sql<{ id: string }>`SELECT id FROM users WHERE clerk_id = ${userId}`) as {
       id: string
@@ -92,10 +96,12 @@ export async function GET(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const { userId } = await auth()
-    if (!userId) {
+    const res = new NextResponse()
+    const session = await getSession(request, res)
+    if (!session || !session.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
+    const userId = session.user.sub
 
     const { keyId } = await request.json()
 

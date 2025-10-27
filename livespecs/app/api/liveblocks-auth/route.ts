@@ -1,12 +1,11 @@
-import { getAuth0User } from "@/lib/auth0"
-import { withApiAuthRequired } from '@auth0/nextjs-auth0'
+import { getSession } from "@auth0/nextjs-auth0"
 import { NextRequest, NextResponse } from "next/server"
 
-export const POST = withApiAuthRequired(async function handler(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    const user = await getAuth0User(request)
+    const session = await getSession()
 
-    if (!user) {
+    if (!session || !session.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -15,11 +14,11 @@ export const POST = withApiAuthRequired(async function handler(request: NextRequ
     return NextResponse.json({
       token: "mock-token",
       user: {
-        id: user.sub,
+        id: session.user.sub,
         info: {
-          name: user.name || "Anonymous",
-          email: user.email,
-          avatar: user.picture,
+          name: session.user.name || "Anonymous",
+          email: session.user.email,
+          avatar: session.user.picture,
         },
       },
     })
@@ -27,4 +26,4 @@ export const POST = withApiAuthRequired(async function handler(request: NextRequ
     console.error("Error authenticating with Liveblocks:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
-})
+}

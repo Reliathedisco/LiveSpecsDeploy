@@ -1,11 +1,12 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { auth } from "@clerk/nextjs/server"
+import { getSession } from "@auth0/nextjs-auth0"
 import { generateText } from "ai"
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = await auth()
-    if (!userId) {
+    const res = new NextResponse()
+    const session = await getSession(request, res)
+    if (!session || !session.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 

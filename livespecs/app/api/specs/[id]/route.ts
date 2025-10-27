@@ -1,11 +1,11 @@
 import { sql } from "@/lib/db"
-import { currentUser } from "@clerk/nextjs/server"
+import { getSession } from "@auth0/nextjs-auth0"
 import { NextResponse } from "next/server"
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
-    const clerkUser = await currentUser()
+    const session = await getSession(); const clerkUser = session?.user
 
     if (!clerkUser) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -13,7 +13,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 
     // Find or create user
     let userRows = (await sql<{ id: string }>`
-      SELECT id FROM users WHERE clerk_id = ${clerkUser.id}
+      SELECT id FROM users WHERE clerk_id = ${clerkUser.sub}
     `) as { id: string }[]
 
     if (userRows.length === 0) {
@@ -21,9 +21,9 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         INSERT INTO users (clerk_id, email, name, image_url, plan)
         VALUES (
           ${clerkUser.id},
-          ${clerkUser.emailAddresses[0]?.emailAddress || "no-email@example.com"},
-          ${`${clerkUser.firstName || ""} ${clerkUser.lastName || ""}`.trim() || null},
-          ${clerkUser.imageUrl || null},
+          ${clerkUser.email || "no-email@example.com"},
+          ${clerkUser.name || null},
+          ${clerkUser.picture || null},
           'FREE'
         )
         RETURNING id
@@ -88,14 +88,14 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
-    const clerkUser = await currentUser()
+    const session = await getSession(); const clerkUser = session?.user
 
     if (!clerkUser) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     let userRows = (await sql<{ id: string }>`
-      SELECT id FROM users WHERE clerk_id = ${clerkUser.id}
+      SELECT id FROM users WHERE clerk_id = ${clerkUser.sub}
     `) as { id: string }[]
 
     if (userRows.length === 0) {
@@ -103,9 +103,9 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         INSERT INTO users (clerk_id, email, name, image_url, plan)
         VALUES (
           ${clerkUser.id},
-          ${clerkUser.emailAddresses[0]?.emailAddress || "no-email@example.com"},
-          ${`${clerkUser.firstName || ""} ${clerkUser.lastName || ""}`.trim() || null},
-          ${clerkUser.imageUrl || null},
+          ${clerkUser.email || "no-email@example.com"},
+          ${clerkUser.name || null},
+          ${clerkUser.picture || null},
           'FREE'
         )
         RETURNING id
@@ -178,14 +178,14 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
-    const clerkUser = await currentUser()
+    const session = await getSession(); const clerkUser = session?.user
 
     if (!clerkUser) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     const userRows = (await sql<{ id: string }>`
-      SELECT id FROM users WHERE clerk_id = ${clerkUser.id}
+      SELECT id FROM users WHERE clerk_id = ${clerkUser.sub}
     `) as { id: string }[]
 
     const user = userRows[0]
