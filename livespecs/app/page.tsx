@@ -1,21 +1,34 @@
 "use client"
-import { useEffect } from "react"
-import { useUser } from "@auth0/nextjs-auth0/client"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { getSupabaseClient } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import Link from "next/link"
 
 export default function LandingPage() {
-  const { user, isLoading } = useUser()
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    if (!isLoading && user) {
-      router.push("/dashboard")
+    const checkUser = async () => {
+      try {
+        const supabase = getSupabaseClient()
+        const { data: { user } } = await supabase.auth.getUser()
+
+        if (user) {
+          router.push("/dashboard")
+        }
+      } catch (error) {
+        console.error("Error checking user:", error)
+      } finally {
+        setIsLoading(false)
+      }
     }
-  }, [isLoading, user, router])
+
+    checkUser()
+  }, [router])
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
