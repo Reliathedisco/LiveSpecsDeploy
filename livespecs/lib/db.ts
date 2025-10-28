@@ -1,65 +1,15 @@
-import { neon } from "@neondatabase/serverless"
+import { PrismaClient } from '@prisma/client'
 
-type NeonClient = ReturnType<typeof neon>
-
-let sqlClient: NeonClient | null = null
-
-function normalizeResult(result: any) {
-  if (Array.isArray(result)) {
-    return result
-  }
-
-  if (result && typeof result === "object") {
-    if (Array.isArray(result.rows)) {
-      return result.rows
-    }
-    if (Array.isArray(result[0])) {
-      return result[0]
-    }
-  }
-
-  return result
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined
 }
 
-function getSql() {
-  if (sqlClient) return sqlClient
+export const prisma = globalForPrisma.prisma ?? new PrismaClient()
 
-  const databaseUrl =
-    process.env.NEON_NEON_DATABASE_URL ||
-    process.env.NEON_NEON_DATABASE_URL ||
-    process.env.DATABASE_URL ||
-    process.env.NEON_POSTGRES_URL
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 
-  if (!databaseUrl) {
-    throw new Error(
-      "Database URL not found. Please set NEON_DATABASE_URL, DATABASE_URL, or NEON_POSTGRES_URL environment variable.",
-    )
-  }
+export const db = prisma
 
-  console.log("[v0] Initializing database connection")
-  sqlClient = neon(databaseUrl)
-  return sqlClient
-}
-
-type SqlClient = NeonClient & {
-  <T = Record<string, unknown>>(strings: TemplateStringsArray, ...values: unknown[]): Promise<T[]>
-}
-
-export const sql = new Proxy({} as NeonClient, {
-  get(target, prop) {
-    const client = getSql()
-    const value = client[prop as keyof typeof client]
-    if (typeof value === "function") {
-      return value.bind(client)
-    }
-    return value
-  },
-  apply(target, thisArg, args) {
-    const client = getSql()
-    const execution = (client as any)(...args)
-    if (execution && typeof execution.then === "function") {
-      return execution.then(normalizeResult)
-    }
-    return normalizeResult(execution)
-  },
-}) as SqlClient
+export const sql = (() => {
+  throw new Error('Raw SQL queries are not supported with SQLite. Please use Prisma client instead.')
+}) as any

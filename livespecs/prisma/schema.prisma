@@ -3,9 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model User {
@@ -31,7 +30,7 @@ model User {
 model Spec {
   id        String   @id @default(cuid())
   name      String
-  content   String   @db.Text
+  content   String
   ownerId   String
   owner     User     @relation("SpecOwner", fields: [ownerId], references: [id], onDelete: Cascade)
   teamId    String?
@@ -110,7 +109,7 @@ model SpecVersion {
   id        String   @id @default(cuid())
   specId    String
   spec      Spec     @relation(fields: [specId], references: [id], onDelete: Cascade)
-  content   String   @db.Text
+  content   String
   message   String?
   createdAt DateTime @default(now())
 
