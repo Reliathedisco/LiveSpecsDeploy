@@ -6,6 +6,7 @@ export interface StripeProduct {
   price: number;
   currency: string;
   mode: 'payment' | 'subscription';
+  checkoutUrl?: string;
 }
 
 export const stripeProducts: StripeProduct[] = [
@@ -16,7 +17,8 @@ export const stripeProducts: StripeProduct[] = [
     description: 'Unlimited API specs, unlimited collaborators, GitHub sync, advanced mock server, priority support, and all Team features. Perfect for growing development teams.',
     price: 99.00,
     currency: 'usd',
-    mode: 'subscription'
+    mode: 'subscription',
+    checkoutUrl: 'https://buy.stripe.com/eVq5kC8vk1NnbZ24AA3wQ01'
   }
 ];
 

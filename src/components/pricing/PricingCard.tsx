@@ -30,8 +30,12 @@ export function PricingCard({ product }: PricingCardProps) {
     setError('')
 
     try {
-      const checkoutUrl = await createCheckoutSession(product.priceId, product.mode)
-      window.location.href = checkoutUrl
+      if (product.checkoutUrl) {
+        window.location.href = product.checkoutUrl
+      } else {
+        const checkoutUrl = await createCheckoutSession(product.priceId, product.mode)
+        window.location.href = checkoutUrl
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to start checkout')
       setLoading(false)
