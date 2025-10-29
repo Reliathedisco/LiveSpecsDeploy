@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@liveblocks/node": "^3.9.1",
-    "next-auth": "^4.24.11"
+    "@supabase/supabase-js": "^2.77.0",
+    "next-auth": "^4.24.11",
+    "react-router-dom": "^7.9.5"
   }
 }
