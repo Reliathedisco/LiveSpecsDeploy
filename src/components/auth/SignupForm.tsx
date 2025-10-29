@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { AlertCircle, Loader2, CheckCircle } from 'lucide-react'
+import { CircleAlert as AlertCircle, Loader as Loader2, CircleCheck as CheckCircle } from 'lucide-react'
 
 export function SignupForm() {
   const [email, setEmail] = useState('')

@@ -3,7 +3,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useSubscription } from '@/hooks/useSubscription'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { ArrowRight, CheckCircle } from 'lucide-react'
+import { ArrowRight, CircleCheck as CheckCircle } from 'lucide-react'
 
 export function Home() {
   const { user } = useAuth()

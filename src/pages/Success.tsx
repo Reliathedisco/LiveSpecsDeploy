@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useSubscription } from '@/hooks/useSubscription'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { CheckCircle, ArrowRight, Loader2 } from 'lucide-react'
+import { CircleCheck as CheckCircle, ArrowRight, Loader as Loader2 } from 'lucide-react'
 
 export function Success() {
   const { user } = useAuth()

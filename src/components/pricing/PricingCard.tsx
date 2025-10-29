@@ -6,7 +6,7 @@ import { formatPrice, type StripeProduct } from '@/stripe-config'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { CheckCircle, Loader2, AlertCircle } from 'lucide-react'
+import { CircleCheck as CheckCircle, Loader as Loader2, CircleAlert as AlertCircle } from 'lucide-react'
 
 interface PricingCardProps {
   product: StripeProduct
